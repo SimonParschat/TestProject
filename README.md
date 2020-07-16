@@ -1,0 +1,1 @@
+Simple Test Project to Practice using cmake together with git
