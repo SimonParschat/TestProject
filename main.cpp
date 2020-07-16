@@ -1,8 +1,10 @@
 #include <iostream>
 
+#include "PrintFunction.h"
+
 int main() 
 {
-    std::cout << "Hello World!" << std::endl;
+    PrintFunction pf( "Hello World!" );
 
     return 0;
 }
