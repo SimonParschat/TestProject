@@ -1,5 +1,7 @@
 #include "LogFunc.h"
 
+namespace test {
+
 Log::Log(const std::chrono::system_clock::duration startTime)
     :   m_SystemStartTime(startTime)
 {
@@ -47,4 +49,6 @@ void Log::warn(const char* message)
     if (mili < 10) miliZero = "0";
 
     std::cout << "["<<hourZero<<hours<<":"<<minZero<<minutes<<":"<<secZero<<seconds<<":"<<miliZero<<mili<<"] [LOG : WARNING] " << message << std::endl;
+}
+
 }
