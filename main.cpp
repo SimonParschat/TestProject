@@ -6,9 +6,59 @@
 #include "Test.h"
 #include "TestMesh.h"
 
+glm::vec3 cameraPosition = glm::vec3(0.0f);
+glm::vec2 cameraRotation = glm::vec2(0.0f);
+
 int SCREEN_WIDTH = 960;
 int SCREEN_HEIGHT = 600;
 
+void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if ((key == GLFW_KEY_W) && (action == GLFW_PRESS))
+        cameraPosition.z = (cameraPosition.z == 0.0f) ?  1.0f : 0.0f;
+    if ((key == GLFW_KEY_A) && (action == GLFW_PRESS))
+        cameraPosition.x = (cameraPosition.x == 0.0f) ? -1.0f : 0.0f;
+    if ((key == GLFW_KEY_D) && (action == GLFW_PRESS))
+        cameraPosition.x = (cameraPosition.x == 0.0f) ?  1.0f : 0.0f;
+    if ((key == GLFW_KEY_S) && (action == GLFW_PRESS))
+        cameraPosition.z = (cameraPosition.z == 0.0f) ? -1.0f : 0.0f;
+    if ((key == GLFW_KEY_SPACE) && (action == GLFW_PRESS))
+        cameraPosition.y = (cameraPosition.y == 0.0f) ?  1.0f : 0.0f;
+    if ((key == GLFW_KEY_LEFT_SHIFT) && (action == GLFW_PRESS))
+        cameraPosition.y = (cameraPosition.y == 0.0f) ?  -1.0f : 0.0f;
+    
+    if ((key == GLFW_KEY_UP) && (action == GLFW_PRESS))
+        cameraRotation.x = (cameraRotation.x == 0.0f) ? 1.0f : 0.0f;
+    if ((key == GLFW_KEY_DOWN) && (action == GLFW_PRESS))
+        cameraRotation.x = (cameraRotation.x == 0.0f) ? -1.0f : 0.0f;
+    if ((key == GLFW_KEY_LEFT) && (action == GLFW_PRESS))
+        cameraRotation.y = (cameraRotation.y == 0.0f) ? -1.0f : 0.0f;
+    if ((key == GLFW_KEY_RIGHT) && (action == GLFW_PRESS))
+        cameraRotation.y = (cameraRotation.y == 0.0f) ? 1.0f : 0.0f;
+    
+
+    if (key == GLFW_KEY_W && action == GLFW_RELEASE)
+        cameraPosition.z = cameraPosition.z ==  1.0f ?  0.0f :-1.0f;
+    if (key == GLFW_KEY_A && action == GLFW_RELEASE)
+        cameraPosition.x = cameraPosition.x == -1.0f ?  0.0f : 1.0f;
+    if (key == GLFW_KEY_D && action == GLFW_RELEASE)
+        cameraPosition.x = cameraPosition.x ==  1.0f ?  0.0f :-1.0f;
+    if (key == GLFW_KEY_S && action == GLFW_RELEASE)
+        cameraPosition.z = cameraPosition.z == -1.0f ?  0.0f : 1.0f;
+    if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE)
+        cameraPosition.y = cameraPosition.y ==  1.0f ?  0.0f :-1.0f;
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE)
+        cameraPosition.y = cameraPosition.y == -1.0f ?  0.0f : 1.0f;
+    
+    if (key == GLFW_KEY_UP && action == GLFW_RELEASE)
+        cameraRotation.x = cameraRotation.x == 1.0f ?  0.0f : -1.0f;
+    if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE)
+        cameraRotation.x = cameraRotation.x == -1.0f ?  0.0f : 1.0f;
+    if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE)
+        cameraRotation.y = cameraRotation.y == -1.0f ?  0.0f : 1.0f;
+    if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE)
+        cameraRotation.y = cameraRotation.y == 1.0f ?  0.0f : -1.0f;
+}
 
 int main() 
 {
@@ -31,6 +81,8 @@ int main()
         return -1;
     }
 
+    glfwSetKeyCallback(window, KeyCallback);
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval( 1 );
     glewExperimental = GL_TRUE;
@@ -44,6 +96,7 @@ int main()
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+
     ImGui_ImplGlfw_InitForOpenGL( window, true );
     ImGui_ImplOpenGL3_Init( "#version 330" );
     ImGui::StyleColorsDark();
@@ -66,12 +119,14 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        // ImGui::ShowDemoWindow();
+
         glClearColor( 0.3f, 0.0f, 0.0f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
         if ( currentTest )
         {
-            currentTest->OnUpdate(  );
+            currentTest->OnUpdate( cameraPosition, cameraRotation );
             currentTest->OnRender(  );
             ImGui::Begin("Test");
             if ( currentTest != testMenu && ImGui::Button( "<-" ) )
@@ -102,6 +157,13 @@ int main()
         glfwPollEvents();
         glFinish();
     }
+    delete currentTest;
+    if ( currentTest != testMenu )
+        delete testMenu;
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;

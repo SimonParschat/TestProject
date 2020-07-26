@@ -20,6 +20,8 @@ namespace test
 {
 static float m_PI  = 3.1415926535897932384626433832795028842;
 
+static int s_MaxVertices = 15000;
+
 struct Vertex
 {
     glm::vec3 position;
@@ -35,7 +37,7 @@ class Test
         Test(  ) {}
         virtual ~Test(  ) {}
 
-        virtual void OnUpdate( ) {}
+        virtual void OnUpdate( glm::vec3, glm::vec2 ) {}
         virtual void OnRender(  ) {}
         virtual void OnImGuiRender(  ) {}
         virtual void OnImGuiPlot(  ) {}
